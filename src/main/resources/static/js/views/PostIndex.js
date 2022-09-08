@@ -48,7 +48,7 @@ function addPostHandler() {
             body: JSON.stringify(newPost)
         }
 
-        fetch("http://localhost:8081/api/posts", request)
+        fetch("http://localhost:8080/api/posts", request)
             .then(response => {
                 console.log(response.status);
                 CreateView("/posts");
@@ -56,6 +56,6 @@ function addPostHandler() {
     });
 }
 
-function editPostHandler() {
-
-}
+// function editPostHandler() {
+//
+// }
