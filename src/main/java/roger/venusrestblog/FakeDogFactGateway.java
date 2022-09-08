@@ -1,16 +1,14 @@
 package roger.venusrestblog;
 
-import org.springframework.web.bind.annotation.PathVariable;
-
 public class FakeDogFactGateway {
-    public static String fetchDogFactById(@PathVariable long id) {
-//        TODO: Fetch the particular dog fact with matching id from data
+
+    public static String fetchDogFactById(long id) {
+        // TODO: fetch the particular dog fact with matching id from database
         switch((int) id) {
             case 1:
-                return "Dogs don't feel Guilty";
-
+                return "Dogs don’t feel Guilty";
             case 2:
-                return "Their sense of smell is really powerful";
+                return "Their sense of Smell is really Powerful";
             default:
                 return "Unknown fact id!";
         }
