@@ -53,6 +53,7 @@ function addPostHandler() {
                 console.log(response.status);
                 CreateView("/posts");
             })
+        // hi
     });
 }
 
