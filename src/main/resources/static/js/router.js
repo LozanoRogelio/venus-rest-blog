@@ -9,7 +9,6 @@ import Register from "./views/Register.js"
 import {RegisterEvent} from "./views/Register.js";
 import prepareUserHTML, {prepareUserJS} from "./views/User.js";
 
-
 /**
  * Returns the route object for a specific route based on the given URI
  * @param URI
@@ -38,15 +37,14 @@ export default function router(URI) {
             viewEvent: RegisterEvent
         },
         '/me': {
-            returnView: prepareUserHTML(),
+            returnView: prepareUserHTML,
             state: {
-                posts: '/api/users/me'
+                me: '/api/users/me'
             },
             uri: '/me',
             title: 'User Info',
-            viewEvent: prepareUserJS()
+            viewEvent: prepareUserJS
         },
-
         '/posts': {
             returnView: PostIndex,
             state: {
@@ -78,4 +76,3 @@ export default function router(URI) {
 
     return routes[URI];
 }
-

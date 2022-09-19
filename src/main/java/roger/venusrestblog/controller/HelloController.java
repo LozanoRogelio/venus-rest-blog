@@ -3,6 +3,7 @@ package roger.venusrestblog.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 // in tbe below annotation ", headers = "Accept=application/json" "
 // is what makes this controller return JSON by default

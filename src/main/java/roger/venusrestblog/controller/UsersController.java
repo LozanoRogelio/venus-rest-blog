@@ -1,133 +1,119 @@
 package roger.venusrestblog.controller;
 
+import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import roger.venusrestblog.data.User;
+import roger.venusrestblog.data.UserRole;
+import roger.venusrestblog.misc.FieldHelper;
+import roger.venusrestblog.repository.UsersRepository;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/users", produces = "application/json")
 public class UsersController {
-    private List<User> users = new ArrayList<>();
-    private long nextId = 1;
+    private UsersRepository usersRepository;
 
     @GetMapping("")
     public List<User> fetchUsers() {
-        return users;
+        return usersRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public User fetchUserById(@PathVariable long id) {
-        // search through the list of posts
-        // and return the post that matches the given id
-        User user = findUserById(id);
-        if(user == null) {
-            // what to do if we don't find it
-            throw new RuntimeException("I don't know what I am doing");
+    public Optional<User> fetchUserById(@PathVariable long id) {
+        Optional<User> optionalUser = usersRepository.findById(id);
+        if(optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + id + " not found");
         }
-
-        // we found the post so just return it
-        return user;
+        return optionalUser;
     }
 
     @GetMapping("/me")
-    private User fetchMe() {
-        User user = new User();
-        user.setId(99999);
-        user.setUserName("roger");
-        user.setEmail("roger@codeup.com");
-        return user;
+    private Optional<User> fetchMe() {
+        return usersRepository.findById(1L);
     }
 
-@GetMapping("/username/{userName}")
-private User fetchByUserName(@PathVariable String userName) {
-        User user =findUserByUserName(userName);
-    if(user == null) {
-//       what to do if not found
-        throw new RuntimeException("I don't know what I am doing");
-    }
-    return user;
+//    @GetMapping("/username/{userName}")
+//    private User fetchByUserName(@PathVariable String userName) {
+//
+//    }
 
-}
-    private User findUserByUserName(String userName) {
-        for (User user : users) {
-            if (user.getUserName().equals(userName)) {
-                return user;
-            }
-        }
-        // didn't find it so do something
-        return null;
-    }
-
-    @GetMapping("/username/{email}")
-    private User fetchByUserEmail(@PathVariable String email) {
-        User user =findUserByEmail(email);
-        if(user == null) {
-//       what to do if not found
-            throw new RuntimeException("I don't know what I am doing");
-        }
-        return user;
-
-    }
-    private User findUserByEmail(String email) {
-        for (User user : users) {
-            if (user.getUserName().equals(email)) {
-                return user;
-            }
-        }
-        // didn't find it so do something
-        return null;
-    }
-
-
-    private User findUserById(long id) {
-        for (User user: users) {
-            if(user.getId() == id) {
-                return user;
-            }
-        }
-        // didn't find it so do something
-        return null;
-    }
+//    @GetMapping("/email/{email}")
+//    private User fetchByEmail(@PathVariable String email) {
+//        User user = findUserByEmail(email);
+//        if(user == null) {
+//            // what to do if we don't find it
+//            throw new RuntimeException("I don't know what I am doing");
+//        }
+//        return user;
+//    }
 
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
-//        System.out.println(newPost);
-        // assign  nextId to the new post
-        newUser.setId(nextId);
-        nextId++;
+        // TODO: validate new user fields
 
-        users.add(newUser);
+        // don't need the below line at this point but just for kicks
+        newUser.setCreatedAt(LocalDate.now());
+        usersRepository.save(newUser);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable long id) {
-        // search through the list of posts
-        // and delete the post that matches the given id
-        User user = findUserById(id);
-        if(user != null) {
-            users.remove(user);
-            return;
+        Optional<User> optionalUser = usersRepository.findById(id);
+        if(optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + id + " not found");
         }
-        // what to do if we don't find it
-        throw new RuntimeException("User not found");
+        usersRepository.deleteById(id);
     }
 
     @PutMapping("/{id}")
     public void updateUser(@RequestBody User updatedUser, @PathVariable long id) {
-        // find the post to update in the posts list
-
-        User user = findUserById(id);
-        if(user == null) {
-            System.out.println("User not found");
-        } else {
-            if(updatedUser.getEmail() != null) {
-                user.setEmail(updatedUser.getEmail());
-            }
-            return;
+        Optional<User> optionalUser = usersRepository.findById(id);
+        if(optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + id + " not found");
         }
-        throw new RuntimeException("User not found");
+        // get the user from the optional so we no longer have to deal with the optional
+        User originalUser = optionalUser.get();
+
+        // merge the changed data in updatedUser with originalUser
+        BeanUtils.copyProperties(updatedUser, originalUser, FieldHelper.getNullPropertyNames(updatedUser));
+
+        // originalUser now has the merged data (changes + original data)
+        originalUser.setId(id);
+
+        usersRepository.save(originalUser);
+    }
+
+    @PutMapping("/{id}/updatePassword")
+    private void updatePassword(@PathVariable Long id, @RequestParam(required = false) String oldPassword, @RequestParam String newPassword) {
+        Optional<User> optionalUser = usersRepository.findById(id);
+        if(optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + id + " not found");
+        }
+
+        User user = optionalUser.get();
+
+        // compare old password with saved pw
+        if(!user.getPassword().equals(oldPassword)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "amscray");
+        }
+
+        // validate new password
+        if(newPassword.length() < 3) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "new pw length must be at least 3 characters");
+        }
+
+        user.setPassword(newPassword);
+        usersRepository.save(user);
     }
 }
