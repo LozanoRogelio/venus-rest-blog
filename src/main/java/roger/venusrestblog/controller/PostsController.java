@@ -3,6 +3,7 @@ package roger.venusrestblog.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import roger.venusrestblog.data.Category;
@@ -23,8 +24,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/api/posts", produces = "application/json")
 public class PostsController {
-
-    private final EmailService emailService;
+    private EmailService emailService;
     private PostsRepository postsRepository;
     private UsersRepository usersRepository;
     private CategoriesRepository categoriesRepository;
@@ -44,11 +44,11 @@ public class PostsController {
     }
 
     @PostMapping("")
-    public void createPost(@RequestBody Post newPost) {
-
-        // use docrob as author by default
-        User author = usersRepository.findById(1L).get();
+    public void createPost(@RequestBody Post newPost, OAuth2Authentication auth) {
+        String userName = auth.getName();
+        User author = usersRepository.findByUserName(userName);
         newPost.setAuthor(author);
+
         newPost.setCategories(new ArrayList<>());
 
         // use first 2 categories for the post by default
@@ -60,8 +60,7 @@ public class PostsController {
 
         postsRepository.save(newPost);
 
-        emailService.prepareAndSend(newPost, "New Post","Hey, you just made a new post");
-
+        emailService.prepareAndSend(newPost, "Hey man you made a post", "See subject");
     }
 
     @DeleteMapping("/{id}")

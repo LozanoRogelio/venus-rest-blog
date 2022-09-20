@@ -12,6 +12,15 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 
+//@NamedNativeQuery(name = "User.fetchUserDTOs",
+//        query = "SELECT id, user_name, email FROM users",
+//        resultSetMapping = "Mapping.UserFetchDTO")
+//@SqlResultSetMapping(name = "Mapping.UserFetchDTO",
+//        classes = @ConstructorResult(targetClass = UserFetchDTO.class,
+//                columns = {@ColumnResult(name = "id"),
+//                        @ColumnResult(name = "user_name"),
+//                        @ColumnResult(name = "email")}))
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -47,5 +56,13 @@ public class User {
     @OneToMany(mappedBy = "author")
     @JsonIgnoreProperties("author")
     private Collection<Post> posts;
+
+    // the below properties are only for the S3 service
+//    @Column(name = "photo_filename")
+//    @ToString.Exclude
+//    private String photoFileName;
+//
+//    @Transient
+//    private String photourl;
 
 }
