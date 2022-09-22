@@ -1,7 +1,7 @@
 export default function Home(props) {
     return `
         <header>
-            <h1>Home Page</h1>
+            <h1>Welcome</h1>
         </header>
         <main>
             <div>

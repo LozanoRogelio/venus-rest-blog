@@ -1,0 +1,28 @@
+
+.navbar {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    margin: 0 auto;
+    border-bottom: 1px solid #f2f2f2;
+    background: #56baed;
+}
+
+.navbar a {
+    margin-left: auto;
+}
+.navbar a {
+    margin-left: 16px;
+    text-decoration: none;
+    padding: 6px;
+    color: #f2f2f2;
+}
+.navbar a:hover {
+    color: #14215b;
+}
+.content {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+}

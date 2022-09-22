@@ -6,15 +6,31 @@ export default function Login(props) {
     <title>Log In</title>
 </head>
 <body>
-<h1>Log In</h1>
 
-<form id="login-form">
-    <label for="username">Username</label>
-    <input id="username" name="username" type="text" value="roger"/>
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password" value="12345"/>
-    <input id="login-btn" type="submit" value="Log In"/>
-</form>
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+    <h2 class="active"> Log In </h2>
+
+    <!-- Icon -->
+    <div class="fadeIn first">
+<!--      <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />-->
+    </div>
+
+    <!-- Login Form -->
+    <form>
+    <input id="username" class="fadeIn second" name="username" type="text" placeholder="username" value="roger"/>
+    <input id="password" class="fadeIn third" name="password" type="password" placeholder="password" value="12345"/>
+    <input id="login-btn" class="fadeIn fourth" type="submit" value="Log In"/>
+    </form>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">Forgot Password?</a>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>`;
 

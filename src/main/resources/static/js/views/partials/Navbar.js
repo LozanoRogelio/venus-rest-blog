@@ -2,14 +2,15 @@ import {isLoggedIn} from "../../auth.js";
 
 export default function Navbar(props) {
     let navbar = `
+    <div class="navbar">
     <a href="/" data-link>Home</a>
     <a href="/about" data-link>About</a>
+    <a href="/posts" data-link>Posts</a>
     
     `;
     if(isLoggedIn()) {
         navbar += `
          <a href="/me" data-link>Me</a>
-          <a href="/posts" data-link>Posts</a>
           <a href="/logout" data-link>Logout</a>
         `;
     } else {
@@ -18,6 +19,6 @@ export default function Navbar(props) {
         <a href="/register" data-link>Register</a>
         `
     }
-    navbar += `<nav>`;
+    navbar += `<nav></div>`;
     return navbar;
 }

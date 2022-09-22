@@ -1,16 +1,18 @@
 import CreateView from "../createView.js"
 
+
 let me;
 export default function prepareUserHTML(props) {
     me = props.me;
 
     const userPostHTML = createPostHTML(me);
 
+    // make the user's original pw available somewhere in here
     return `
         <h1>User Info</h1>
         <h2>${props.me.userName}</h2>
         <h2>${props.me.email}</h2>
-        
+        <img alt="my photo" src="${props.me.photourl}">
         <form>
             <label for="oldpassword">Please enter your current password</label>
             <input type="password" id="oldpassword" name="oldpassword">
@@ -49,9 +51,9 @@ function createPostHTML(user) {
         for (let i = 0; i < user.posts.length; i++) {
             const post = user.posts[i];
             html += `<tr>
-            <td>${post.title}</td>
-            <td>${post.content}</td>
-            </tr>`;
+                <td>${post.title}</td>
+                <td>${post.content}</td>
+                </tr>`;
         }
     }
 
@@ -95,6 +97,7 @@ function doSavePasswordHandler() {
 function doTogglePasswordHandler() {
     const button = document.querySelector("#toggleShowPassword");
     button.addEventListener("click", function(event) {
+        // grab a reference to confirmpassword
         const oldPassword = document.querySelector("#oldpassword");
         const newPassword = document.querySelector("#newpassword");
         const confirmPassword = document.querySelector("#confirmpassword");
